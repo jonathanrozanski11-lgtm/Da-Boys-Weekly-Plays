@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>Da Boys Weekly Bets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+--bg:#101827; --panel:#172135; --panel2:#1d2940; --line:#2a3854;
+--text:#e8edf6; --muted:#8c9ab3; --accent:#5b8cff;
+--win:#2fbf71; --winbg:rgba(47,191,113,.14);
+--loss:#ef5b5b; --lossbg:rgba(239,91,91,.14);
+--push:#e6b84a; --pushbg:rgba(230,184,74,.14);
+--gold:#f2c94c; --silver:#c0c8d6; --bronze:#d08a52;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 48px}
+header{display:flex;align-items:center;gap:14px;margin-bottom:6px;flex-wrap:wrap}
+.logo{width:46px;height:46px;border-radius:12px;background:var(--logo);display:grid;place-items:center;font-weight:800;font-size:17px;color:#0b1220;letter-spacing:-.5px;flex:none}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+h1{margin:2px 0 0;font-size:28px;font-weight:800;letter-spacing:-.02em}
+.status{color:var(--muted);font-size:13px;margin:6px 0 18px}
+nav{display:flex;gap:6px;margin-bottom:18px;overflow-x:auto}
+nav a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:600;padding:8px 14px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+nav a.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+section{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:18px}
+h2{margin:0;font-size:18px;font-weight:700}
+.sub{color:var(--muted);font-size:13px;margin:4px 0 14px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px}
+.kpi .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.kpi .v{font-size:22px;font-weight:800;margin-top:4px}
+.kpi .d{font-size:12px;color:var(--muted);margin-top:2px}
+@media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)} h1{font-size:24px}}
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.rank{width:34px;height:28px;border-radius:8px;display:inline-grid;place-items:center;font-weight:800;font-size:13px;background:var(--panel2);border:1px solid var(--line)}
+.r1{background:rgba(242,201,76,.18);color:var(--gold);border-color:rgba(242,201,76,.4)}
+.r2{background:rgba(192,200,214,.14);color:var(--silver);border-color:rgba(192,200,214,.35)}
+.r3{background:rgba(208,138,82,.16);color:var(--bronze);border-color:rgba(208,138,82,.4)}
+.name{font-weight:700}
+.alias{color:var(--muted);font-size:12px;font-weight:500;margin-left:4px}
+.me{color:var(--accent);font-size:10px;font-weight:800;letter-spacing:.08em;margin-left:6px;border:1px solid var(--accent);border-radius:4px;padding:1px 4px}
+.pill{display:inline-block;min-width:22px;text-align:center;font-size:11px;font-weight:800;padding:3px 7px;border-radius:6px}
+.W{background:var(--winbg);color:var(--win)}
+.L{background:var(--lossbg);color:var(--loss)}
+.P{background:var(--pushbg);color:var(--push)}
+.N{color:#55627b}
+.bar{height:6px;background:var(--panel2);border-radius:99px;overflow:hidden;width:90px;display:inline-block;vertical-align:middle;margin-left:8px}
+.bar i{display:block;height:100%;background:var(--win)}
+.weeks{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px}
+.weeks button{font:inherit;font-size:13px;font-weight:700;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;white-space:nowrap}
+.weeks button.on{color:#fff;background:var(--accent);border-color:var(--accent)}
+.wsum{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-size:13px;color:var(--muted)}
+.wsum b{color:var(--text)}
+.note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5}
+.grid td,.grid th{text-align:center;padding:8px 6px}
+.grid td:first-child,.grid th:first-child{text-align:left;position:sticky;left:0;background:var(--panel);z-index:1}
+.cell{cursor:pointer}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px}
+.card .top{display:flex;justify-content:space-between;align-items:center}
+.card .rec{font-size:20px;font-weight:800;margin-top:6px}
+.card .meta{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.6}
+.form{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
+.tip{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:#0b1220;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13px;max-width:92vw;box-shadow:0 10px 30px rgba(0,0,0,.4);display:none;z-index:10}
+.src{font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:1px 4px;margin-left:5px;vertical-align:middle}
+.src.slip{color:var(--win);border-color:rgba(47,191,113,.5)}
+.src.line{color:var(--accent);border-color:rgba(91,140,255,.5)}
+.src.alt{color:#c3a6ff;border-color:rgba(160,120,255,.5)}
+.dr{display:inline-grid;place-items:center;width:24px;height:22px;border-radius:6px;font-size:12px;font-weight:800;background:var(--panel2);border:1px solid var(--line)}
+.dr.h{background:rgba(239,91,91,.16);color:#ff8a8a;border-color:rgba(239,91,91,.4)}
+.sharebar{display:inline-block;height:6px;border-radius:99px;background:var(--accent);vertical-align:middle;margin-left:6px}
+.grade{display:inline-block;min-width:30px;text-align:center;font-weight:800;padding:3px 7px;border-radius:6px;background:var(--panel2);border:1px solid var(--line)}
+.gA{color:#7ee2a8;border-color:rgba(47,191,113,.5)} .gB{color:#9db8ff;border-color:rgba(91,140,255,.5)} .gC{color:var(--push);border-color:rgba(230,184,74,.5)} .gD,.gF{color:#ff8a8a;border-color:rgba(239,91,91,.5)}
+.pos{color:var(--win)} .neg{color:var(--loss)}
+section[data-tab]{display:none}
+section[data-tab].show{display:block}
+.recaps{display:grid;gap:10px}
+.rc{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.rc .hd{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rc .tag{font-size:12px;color:var(--muted);font-weight:600}
+.rc .nick{margin-top:10px;font-size:19px;font-weight:800;color:var(--accent);letter-spacing:-.01em}
+.rc .nick span{display:block;font-size:12px;font-weight:500;color:var(--muted);letter-spacing:0;margin-top:2px}
+.rc .hl{font-weight:700;margin:8px 0 4px;font-size:15px}
+.rc p{margin:0;color:#c9d3e4;font-size:14px;line-height:1.55}
+.rc .picks{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px}
+.rc .picks span{font-size:11px;padding:3px 6px;border-radius:6px;border:1px solid var(--line);color:var(--muted)}
+.rc .picks span.W{color:var(--win);border-color:rgba(47,191,113,.4);background:var(--winbg)}
+.rc .picks span.L{color:var(--loss);border-color:rgba(239,91,91,.4);background:var(--lossbg)}
+.rc .picks span.P{color:var(--push);border-color:rgba(230,184,74,.4);background:var(--pushbg)}
+.mainnote{font-size:13px;font-weight:600;color:var(--text);background:var(--accentbg);border:1px solid var(--accentline);border-radius:10px;padding:9px 12px;margin:-8px 0 16px}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable:hover{color:var(--text)}
+th.on{color:var(--accent)}
+.stand table{min-width:1500px}
+.stand .stk{position:sticky;left:0;background:var(--panel);z-index:2;box-shadow:1px 0 0 var(--line)}
+.stand thead .stk{z-index:3}
+:root{--accentbg:rgba(91,140,255,.12);--accentline:rgba(91,140,255,.35);--logo:linear-gradient(135deg,#5b8cff,#2fbf71)}
+html[data-theme="blackred"]{
+--bg:#0a0a0a; --panel:#141414; --panel2:#1c1c1c; --line:#2f2f2f;
+--text:#f4f4f4; --muted:#9b9b9b; --accent:#e10600;
+--accentbg:rgba(225,6,0,.14); --accentline:rgba(225,6,0,.45);
+--loss:#ff6b6b; --logo:linear-gradient(135deg,#e10600,#5a0000)}
+html[data-theme="gridiron"]{
+--bg:#0b1a12; --panel:#11261a; --panel2:#173121; --line:#25462f;
+--text:#eef6ef; --muted:#8fb29a; --accent:#d9a521;
+--accentbg:rgba(217,165,33,.14); --accentline:rgba(217,165,33,.45);
+--win:#4fd18b; --logo:linear-gradient(135deg,#d9a521,#2f7a4a)}
+.themes{margin-left:auto;display:flex;gap:6px;align-items:center}
+.themes span{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-right:2px}
+.themes button{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0}
+.themes button.on{border-color:var(--text);transform:scale(1.1)}
+.tnavy{background:linear-gradient(135deg,#101827 50%,#5b8cff 50%)}
+.tblackred{background:linear-gradient(135deg,#0a0a0a 50%,#e10600 50%)}
+.tgridiron{background:linear-gradient(135deg,#0b1a12 50%,#d9a521 50%)}
+footer{color:var(--muted);font-size:12px;text-align:center;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="logo">DB</div>
+<div>
+<div class="eyebrow">Da Boys &#183; 2026</div>
+<h1>Weekly Bets</h1>
+</div>
+<div class="themes" id="themes"><span>Theme</span>
+<button class="tnavy" data-th="navy" title="Navy"></button>
+<button class="tblackred" data-th="blackred" title="Black &amp; Red"></button>
+<button class="tgridiron" data-th="gridiron" title="Gridiron Green"></button>
+</div>
+</header>
+<div class="status" id="status"></div>
+<div class="mainnote">&#128204; Main picks only &#8212; one official pick per player per week. Side bets are not tracked.</div>
+<nav id="tabs">
+<a href="#standings" data-t="standings">Standings</a>
+<a href="#weekly" data-t="weekly">Weekly Results</a>
+<a href="#parlay" data-t="parlay">$50 Parlay</a>
+<a href="#recap" data-t="recap">Season Recap</a>
+<a href="#difficulty" data-t="difficulty">Difficulty</a>
+<a href="#grid" data-t="grid">Season Grid</a>
+<a href="#players" data-t="players">Players</a>
+</nav>
+<section data-tab="standings">
+<h2>Season at a glance</h2>
+<div class="sub">One pick per player per week &#183; win / loss / push</div>
+<div class="kpis" id="kpis"></div>
+</section>
+<section id="standings-sec" data-tab="standings">
+<h2>Standings</h2>
+<div class="sub">Ranked by win % (pushes don't count) &#183; tap any column header to sort &#183; swipe sideways for more stats</div>
+<div class="tablewrap stand"><table id="standTbl"></table></div>
+<div class="note"><b>Units</b> = profit if each pick were a $100 bet at its odds. <b>ROI</b> = units &#247; amount risked. <b>Wins vs Exp.</b> = actual wins minus wins the odds predicted. <b>Avg Implied</b> = average chance the odds gave their picks (lower = harder). <b>Avg Multiplier</b> = how much each leg multiplies a parlay. <b>Difficulty</b> = A (longest odds) to F (safest). <b>Avg Wk Diff. Rank</b> = where their pick usually ranks in the weekly difficulty order (lower % = harder pick). <b>Fav / Dog</b> = picks laid at minus vs plus odds. <b>ML / Spread / Props / Totals</b> = record by bet type. <b>Best Hit</b> = longest-odds pick they've won.</div>
+</section>
+<section id="weekly-sec" data-tab="weekly">
+<h2>Weekly Results</h2>
+<div class="sub">Every pick, final score and result</div>
+<div class="weeks" id="weekBtns"></div>
+<div class="wsum" id="wsum"></div>
+<div class="tablewrap"><table id="weekTbl"></table></div>
+<div class="note" id="wnote"></div>
+</section>
+<section id="parlay-sec" data-tab="parlay">
+<h2>The $50 Weekly Parlay</h2>
+<div class="sub">Everyone's main pick in one ticket, $50 a week</div>
+<div class="kpis" id="pkpis"></div>
+<div class="tablewrap" style="margin-top:14px"><table id="parlayTbl"></table></div>
+<div class="note">One $50 parlay is placed every week with all of that week's main picks. Week 8's price is from the actual bet slip (+1056, $578.25 to pay). Other weeks' prices are the legs' odds multiplied together, so the real ticket may have been priced a little differently. The Week 7 push would have dropped out of the parlay, which still lost.</div>
+</section>
+<section id="recap-sec" data-tab="recap">
+<h2>Season Recap</h2>
+<div class="sub">A quick read on everyone's picks so far &#183; through Week 9</div>
+<div class="recaps" id="recaps"></div>
+</section>
+<section id="difficulty-sec" data-tab="difficulty">
+<h2>Pick Difficulty &amp; Value</h2>
+<div class="sub">Season average odds per player &#183; toughest pickers first &#183; grade = how hard their picks were to hit</div>
+<div class="tablewrap"><table id="diffTbl"></table></div>
+<div class="note">Implied % is the chance the odds give a pick of hitting (lower = harder). Avg multiplier is how much each of their legs multiplies a parlay payout on average. Wins vs expected compares actual wins to what the odds predicted (+ = beating the book). Difficulty grade: A = longest odds, F = safest. Odds tags: <b>slip</b> = from the group's bet slip; <b>line</b> = the sportsbook price posted before kickoff (ESPN/DraftKings moneylines, Covers closing spreads, bet365/FanDuel lines); <b>alt</b> = an alternate spread or total priced off that posted line (e.g. Lions -2.5 when the game closed -6.5); <b>est</b> = player props, estimated from typical prop lines.</div>
+</section>
+<section id="grid-sec" data-tab="grid">
+<h2>Season Grid</h2>
+<div class="sub">Tap any result to see the pick</div>
+<div class="tablewrap"><table class="grid" id="gridTbl"></table></div>
+</section>
+<section id="players-sec" data-tab="players">
+<h2>Player Cards</h2>
+<div class="sub">Record, streak and recent form</div>
+<div class="cards" id="cards"></div>
+</section>
+<footer>Da Boys Weekly Bets &#183; main picks only, no side bets &#183; scores from final box scores</footer>
+</div>
+<div class="tip" id="tip"></div>
+<script>
+const PLAYERS = [
+{id:"jono",    name:"Jono",    alias:"Jon R", me:true},
+{id:"bunyard", name:"Bunyard", alias:"Brian"},
+{id:"clayton", name:"Clayton", alias:""},
+{id:"sam",     name:"Sam",     alias:""},
+{id:"nix",     name:"Nix",     alias:"Colin"},
+{id:"kollman", name:"Kollman", alias:"Jon K"},
+{id:"tito",    name:"Tito",    alias:"Tyler"},
+{id:"tommy",   name:"Tommy",   alias:""},
+{id:"marcos",  name:"Marcos",  alias:""},
+{id:"regs",    name:"Regs",    alias:"Ryan"}
+];
+// [pick, final/stat, result, odds, source]  slip = bet slip, line = posted sportsbook price/close, alt = priced off the posted line, est = estimate (props)
+const WEEKS = [
+{wk:1, label:"Week 1", dates:"Sep 9\u201314", picks:{
+regs:["Eagles -5.5","PHI 24, WAS 22","L",-110,"line"],
+kollman:["Jadarian Price 55+ rush yds","52 yds","L",140,"est"],
+jono:["Chargers/Cardinals U47","ARI 26, LAC 14 (40 pts)","W",-105,"alt"],
+sam:["Panthers +3.5","CHI 59, CAR 37","L",-130,"alt"],
+bunyard:["Steelers -2.5","PIT 20, ATL 13","W",-160,"alt"],
+clayton:["Bills -1.5","BUF 36, HOU 31","W",-110,"line"],
+tommy:["Rams ML","SF 27, LAR 7","L",-200,"line"],
+nix:["Seahawks ML","SEA 13, NE 10","W",-175,"line"],
+tito:["Cowboys ML","NYG 28, DAL 20","L",-170,"line"],
+marcos:["Ravens -3.5","BAL 41, IND 23","W",-110,"line"]}},
+{wk:2, label:"Week 2", dates:"Sep 17\u201321", picks:{
+regs:["Ravens -4.5","NO 24, BAL 17","L",-230,"alt"],
+kollman:["49ers ML","SF 35, MIA 13","W",-950,"line"],
+jono:["Cowboys ML","DAL 37, WAS 20","W",-195,"line"],
+sam:["Packers -3.5","GB 20, NYJ 17 (OT)","L",-110,"line"],
+bunyard:["Raiders +7.5","LV 26, LAC 14","W",-110,"line"],
+clayton:["Eagles ML","PHI 24, TEN 20","W",-340,"line"],
+tommy:["Steelers +4.5","NE 20, PIT 3","L",115,"alt"],
+nix:["Seahawks ML","SEA 31, ARI 7","W",-210,"line"],
+tito:["Buccaneers ML","CLE 23, TB 19","L",-420,"line"],
+marcos:["Bears -4.5","MIN 9, CHI 3","L",-130,"alt"]}},
+{wk:3, label:"Week 3", dates:"Sep 24\u201328", note:"Only 5 picks this week.", picks:{
+kollman:["Eagles ML","CHI 27, PHI 7","L",-225,"line"],
+jono:["Panthers -2.5","CLE 21, CAR 18","L",-125,"alt"],
+bunyard:["Chiefs -9.5","KC 24, MIA 10","W",-125,"alt"],
+clayton:["Derrick Henry 90+ rush yds","89 yds","L",105,"est"],
+nix:["Seahawks ML","WAS 33, SEA 31","L",-355,"line"]}},
+{wk:4, label:"Week 4", dates:"Oct 1\u20135", note:"Clayton's \u201cTEN -6.5\u201d graded as the Tennessee Vols. Tommy's pick is Texas Tech (college).", picks:{
+regs:["Packers ML","GB 17, TB 14","W",-185,"line"],
+kollman:["Stafford 230+ pass yds","317 yds","W",-160,"est"],
+jono:["49ers -2.5","SF 24, DEN 14","W",-110,"line"],
+sam:["Bears -3.5","CHI 23, NYJ 12","W",-110,"line"],
+bunyard:["Vikings -10","MIN 15, MIA 10","L",-120,"alt"],
+clayton:["Tennessee (CFB) -6.5","TENN 24, AUB 14","W",-110,"est"],
+tommy:["Texas Tech (CFB) -13.5","TTU 29, COLO 7","W",-110,"est"],
+nix:["Seahawks ML","SEA 30, LAC 23","W",-375,"line"],
+tito:["Cardinals ML","NYG 36, ARI 24","L",-142,"line"],
+marcos:["Jaguars +2.5","JAX 22, CIN 17","W",-110,"line"]}},
+{wk:5, label:"Week 5", dates:"Oct 8\u201312", note:"Week 4's losers (Bunyard, Tito) sat out.", picks:{
+regs:["Vikings ML","MIN 23, NO 13","W",-142,"line"],
+kollman:["Lions -2.5","DET 45, ARI 21","W",-190,"alt"],
+jono:["Cowboys -5.5","TB 24, DAL 16","L",-230,"alt"],
+sam:["Bengals -6.5","CIN 31, MIA 24","W",-140,"alt"],
+clayton:["Texas (CFB) -6.5","OU 27, TEX 24","L",-140,"alt"],
+tommy:["Commanders -3.5","NYG 27, WAS 27 (tie)","L",-110,"line"],
+nix:["Seahawks ML","SF 32, SEA 29","L",-162,"line"],
+marcos:["Chargers +3.5","DEN 23, LAC 17","L",-110,"line"]}},
+{wk:6, label:"Week 6", dates:"Oct 18", note:"Only 3 picks, played as a 3-leg parlay.", picks:{
+kollman:["Malik Nabers 100+ rec yds","165 yds","W",150,"est"],
+regs:["DeVonta Smith 80+ rec yds","75 yds","L",180,"est"],
+sam:["Jonathan Taylor 2+ TDs","1 TD","L",250,"est"]}},
+{wk:7, label:"Week 7", dates:"Oct 22\u201326", note:"Clayton's Indiana -7 landed exactly on the number: push.", picks:{
+regs:["Jets ML","MIA 28, NYJ 25","L",-225,"line"],
+kollman:["49ers ML","ATL 29, SF 20","L",-148,"line"],
+jono:["Lions -2.5","DET 20, GB 17","W",-135,"alt"],
+sam:["Vikings ML","MIN 16, IND 10","W",-285,"line"],
+bunyard:["Texas Tech (CFB) ML","CIN 37, TTU 24","L",-465,"line"],
+clayton:["Indiana (CFB) -7","IU 13, MICH 6 (OT)","P",-105,"alt"],
+tommy:["Buccaneers +2.5","TB 43, CAR 13","W",115,"alt"],
+nix:["Seahawks ML","SEA 20, KC 3","W",-142,"line"],
+tito:["CMC TD","Scored","W",-175,"est"],
+marcos:["Saints +3.5","PIT 16, NO 10","L",-110,"line"]}},
+{wk:8, label:"Week 8", dates:"Oct 29\u2013Nov 2", note:"Only 5 picks. Cowboys -310 and Lions -143 are from Ryan's bet slip (5-pick parlay +1056).", picks:{
+jono:["Lions -2.5","DET 19, MIN 15","W",-143,"slip"],
+sam:["Bills -3.5","BUF 36, BAL 10","W",-110,"line"],
+tommy:["Cowboys ML","ARI 33, DAL 30","L",-310,"slip"],
+nix:["Seahawks ML","CHI 34, SEA 17","L",-170,"line"],
+tito:["Derrick Henry TD","Scored","W",-160,"est"]}},
+{wk:9, label:"Week 9", dates:"Nov 5\u20139", picks:{
+kollman:["Smith-Njigba 100+ rec yds","51 yds","L",120,"est"],
+marcos:["Chargers +6","HOU 44, LAC 22","L",-135,"alt"],
+nix:["Seahawks ML","SEA 17, ARI 3","W",-455,"line"],
+clayton:["Bills -3","BUF 23, MIN 6","W",-130,"alt"],
+regs:["Bears -6","CHI 27, TB 24","L",-120,"alt"],
+bunyard:["Chiefs -3.5","KC 35, NYJ 12","W",-300,"alt"],
+sam:["Rams -4.5","LAR 20, WAS 13","W",-110,"line"],
+tommy:["49ers -9.5","SF 38, LV 17","W",105,"alt"],
+jono:["Lions -2.5","DET 19, MIA 9","W",-210,"alt"],
+tito:["CMC TD","Scored","W",-180,"est"]}}
+];
+// ---- compute ----
+const ip=o=>o<0?(-o)/(-o+100):100/(o+100);
+const decO=o=>o<0?1+100/(-o):1+o/100;
+const amer=d=>d>=2?"+"+Math.round((d-1)*100).toLocaleString():"-"+Math.round(100/(d-1));
+const fo=o=>o>0?"+"+o:String(o);
+const srcTag=s=>s==="slip"?`<span class="src slip">slip</span>`:s==="line"?`<span class="src line">line</span>`:s==="alt"?`<span class="src alt">alt</span>`:`<span class="src">est</span>`;
+WEEKS.forEach(w=>{const e=Object.entries(w.picks).sort((a,b)=>ip(a[1][3])-ip(b[1][3]));
+const tot=e.reduce((s,[k,x])=>s*decO(x[3]),1); w.parlay=tot;
+e.forEach(([k,x],i)=>{x.diff=i+1; x.share=Math.log(decO(x[3]))/Math.log(tot);});});
+function gradeOf(p){p*=100; return p<54?"A":p<56?"B+":p<58?"B":p<60?"B-":p<62?"C+":p<65?"C":p<68?"D":"F";}
+function stats(pid){
+let w=0,l=0,p=0, seq=[];
+WEEKS.forEach(wk=>{const x=wk.picks[pid]; if(x){seq.push({wk:wk.wk,r:x[2]}); if(x[2]==="W")w++; else if(x[2]==="L")l++; else p++;}});
+const dec=w+l, pct=dec?w/dec:0;
+let streak="\u2014"; const dec2=seq.filter(s=>s.r!=="P");
+if(dec2.length){const last=dec2[dec2.length-1].r; let n=0; for(let i=dec2.length-1;i>=0&&dec2[i].r===last;i--)n++; streak=last+n;}
+const lastWk=WEEKS[WEEKS.length-1].picks[pid];
+return {w,l,p,pct,picks:seq.length,streak,seq,last:lastWk?lastWk[2]:null};
+}
+const S = PLAYERS.map(p=>({...p,...stats(p.id)}))
+.sort((a,b)=>b.pct-a.pct || b.w-a.w || a.l-b.l);
+let rank=0, prev=null;
+S.forEach((s,i)=>{const key=s.pct+"|"+s.w; if(key!==prev){rank=i+1;prev=key;} s.rank=rank;});
+const fmtPct = x=>("."+String(Math.round(x*1000)).padStart(3,"0")).replace(".1000","1.000");
+const rec = s=> s.w+"-"+s.l+(s.p?"-"+s.p:"");
+const nm = s=>`<span class="name">${s.name}</span>${s.alias?`<span class="alias">${s.alias}</span>`:""}`;
+// status + KPIs
+const allPicks = WEEKS.flatMap(w=>Object.values(w.picks));
+const tw=allPicks.filter(x=>x[2]==="W").length, tl=allPicks.filter(x=>x[2]==="L").length, tp=allPicks.filter(x=>x[2]==="P").length;
+document.getElementById("status").textContent = `Through Week ${WEEKS.length} \u00b7 ${allPicks.length} picks graded`;
+let best=null; WEEKS.forEach(w=>{const v=Object.values(w.picks); const ww=v.filter(x=>x[2]==="W").length; const pct=ww/v.length; if(!best||pct>best.pct)best={w,ww,n:v.length,pct};});
+const leader=S[0];
+const hot=[...S].filter(s=>s.streak[0]==="W").sort((a,b)=>parseInt(b.streak.slice(1))-parseInt(a.streak.slice(1)))[0];
+document.getElementById("kpis").innerHTML = `
+<div class="kpi"><div class="k">Leader</div><div class="v">${leader.name}</div><div class="d">${rec(leader)} \u00b7 ${fmtPct(leader.pct)}</div></div>
+<div class="kpi"><div class="k">Group record</div><div class="v num">${tw}-${tl}${tp?"-"+tp:""}</div><div class="d">${fmtPct(tw/(tw+tl))} hit rate</div></div>
+<div class="kpi"><div class="k">Best week</div><div class="v">${best.w.label}</div><div class="d">${best.ww} of ${best.n} hit</div></div>
+<div class="kpi"><div class="k">Hottest streak</div><div class="v">${hot?hot.name:"\u2014"}</div><div class="d">${hot?hot.streak.replace("W","")+" straight wins":""}</div></div>`;
+// standings (advanced, sortable)
+function ptype(t){return /\bML\b/.test(t)?"ML":/(TD|yds|\+ rec|\+ rush|\+ pass)/i.test(t)?"Prop":/\b[OU]\d/.test(t)?"Total":"Spread";}
+const ADV=S.map(s=>{
+const a=WEEKS.filter(w=>w.picks[s.id]).map(w=>({w,x:w.picks[s.id]}));
+const n=a.length, avg=a.reduce((t,q)=>t+ip(q.x[3]),0)/n, am=a.reduce((t,q)=>t+decO(q.x[3]),0)/n;
+const exp=a.filter(q=>q.x[2]!=="P").reduce((t,q)=>t+ip(q.x[3]),0);
+const units=a.reduce((t,q)=>t+(q.x[2]==="W"?100*(decO(q.x[3])-1):q.x[2]==="L"?-100:0),0);
+const wins=a.filter(q=>q.x[2]==="W"); const best=wins.length?wins.reduce((m,q)=>ip(q.x[3])<ip(m.x[3])?q:m):null;
+const split={ML:[0,0],Spread:[0,0],Prop:[0,0],Total:[0,0]};
+a.forEach(q=>{const t=ptype(q.x[0]); if(q.x[2]==="W")split[t][0]++; else if(q.x[2]==="L")split[t][1]++;});
+const fav=a.filter(q=>q.x[3]<0).length, dog=n-fav;
+const avgDiffRank=a.reduce((t,q)=>t+q.x.diff/Object.keys(q.w.picks).length,0)/n;
+let longW=0,curW=0; a.forEach(q=>{if(q.x[2]==="W"){curW++;longW=Math.max(longW,curW);}else if(q.x[2]==="L")curW=0;});
+return {s,rank:s.rank,name:s.name,w:s.w,l:s.l,p:s.p,pct:s.pct,picks:s.picks,streak:s.streak,streakVal:(s.streak[0]==="W"?1:-1)*parseInt(s.streak.slice(1)||0),
+last:s.last,avg,am,exp,diff:s.w-exp,units,roi:units/(n*100),best,split,fav,dog,grade:gradeOf(avg),avgDiffRank,longW};
+});
+const COLS=[
+{k:"rank",t:"Rank",v:r=>r.rank,f:r=>`<span class="rank ${r.rank<=3?"r"+r.rank:""}">${r.rank}</span>`},
+{k:"name",t:"Player",v:r=>r.name,f:r=>nm(r.s),sticky:true},
+{k:"rec",t:"Record",v:r=>r.pct,f:r=>`<span class="num">${rec(r.s)}</span>`},
+{k:"pct",t:"Win %",v:r=>r.pct,f:r=>`<span class="num">${fmtPct(r.pct)}</span><span class="bar"><i style="width:${Math.round(r.pct*100)}%"></i></span>`},
+{k:"streak",t:"Streak",v:r=>r.streakVal,f:r=>`<span class="pill ${r.streak[0]}">${r.streak}</span>`},
+{k:"longW",t:"Best Run",v:r=>r.longW,f:r=>`<span class="num">${r.longW}W</span>`},
+{k:"last",t:"Last Wk",v:r=>r.last==="W"?2:r.last==="P"?1:r.last==="L"?0:-1,f:r=>r.last?`<span class="pill ${r.last}">${r.last}</span>`:`<span class="N">\u2014</span>`},
+{k:"units",t:"Units ($100/pick)",v:r=>r.units,f:r=>`<span class="num ${r.units>=0?"pos":"neg"}">${r.units>=0?"+":"-"}$${Math.abs(Math.round(r.units))}</span>`},
+{k:"roi",t:"ROI",v:r=>r.roi,f:r=>`<span class="num ${r.roi>=0?"pos":"neg"}">${r.roi>=0?"+":""}${(r.roi*100).toFixed(0)}%</span>`},
+{k:"diff",t:"Wins vs Exp.",v:r=>r.diff,f:r=>`<span class="num ${r.diff>=0?"pos":"neg"}">${r.diff>=0?"+":""}${r.diff.toFixed(1)}</span>`},
+{k:"avg",t:"Avg Odds",v:r=>-r.avg,f:r=>`<span class="num">${amer(1/r.avg)}</span>`},
+{k:"imp",t:"Avg Implied",v:r=>r.avg,f:r=>`<span class="num">${(r.avg*100).toFixed(1)}%</span>`},
+{k:"am",t:"Avg Multiplier",v:r=>r.am,f:r=>`<span class="num">x${r.am.toFixed(2)}</span>`},
+{k:"grade",t:"Difficulty",v:r=>-r.avg,f:r=>`<span class="grade g${r.grade[0]}">${r.grade}</span>`},
+{k:"dr",t:"Avg Wk Diff. Rank",v:r=>-r.avgDiffRank,f:r=>`<span class="num">${Math.round(r.avgDiffRank*100)}%</span>`},
+{k:"fav",t:"Fav / Dog",v:r=>r.dog/r.picks,f:r=>`<span class="num">${r.fav} / ${r.dog}</span>`},
+{k:"ml",t:"ML",v:r=>r.split.ML[0]-r.split.ML[1],f:r=>sp(r.split.ML)},
+{k:"spr",t:"Spread",v:r=>r.split.Spread[0]-r.split.Spread[1],f:r=>sp(r.split.Spread)},
+{k:"prop",t:"Props",v:r=>r.split.Prop[0]-r.split.Prop[1],f:r=>sp(r.split.Prop)},
+{k:"tot",t:"Totals",v:r=>r.split.Total[0]-r.split.Total[1],f:r=>sp(r.split.Total)},
+{k:"best",t:"Best Hit",v:r=>r.best?-ip(r.best.x[3]):-9,f:r=>r.best?`${r.best.x[0]} <span class="num">(${fo(r.best.x[3])})</span>`:`<span class="N">\u2014</span>`},
+{k:"picks",t:"Picks Made",v:r=>r.picks,f:r=>`<span class="num">${r.picks}/${WEEKS.length}</span>`}
+];
+function sp(a){return a[0]+a[1]?`<span class="num">${a[0]}-${a[1]}</span>`:`<span class="N">\u2014</span>`;}
+let sortK="rank", sortDir=1;
+function renderStand(){
+const c=COLS.find(c=>c.k===sortK);
+const rows=[...ADV].sort((a,b)=>{const x=c.v(a),y=c.v(b); return (typeof x==="string"?x.localeCompare(y):(x-y))*sortDir || a.rank-b.rank;});
+document.getElementById("standTbl").innerHTML=`<thead><tr>${COLS.map(c=>`<th data-k="${c.k}" class="sortable ${c.sticky?"stk":""} ${c.k===sortK?"on":""}">${c.t}${c.k===sortK?(sortDir===1?" \u25b2":" \u25bc"):""}</th>`).join("")}</tr></thead>
+<tbody>${rows.map(r=>`<tr>${COLS.map(c=>`<td class="${c.sticky?"stk":""}">${c.f(r)}</td>`).join("")}</tr>`).join("")}</tbody>`;
+document.querySelectorAll("#standTbl th").forEach(th=>th.onclick=()=>{const k=th.dataset.k; if(k===sortK) sortDir*=-1; else {sortK=k; sortDir=(k==="rank"||k==="name")?1:-1;} renderStand();});
+}
+renderStand();
+// weekly
+let cur=WEEKS.length-1;
+function renderWeek(i){
+cur=i; const w=WEEKS[i];
+document.querySelectorAll("#weekBtns button").forEach((b,j)=>b.classList.toggle("on",j===i));
+const rows=S.filter(s=>w.picks[s.id]).map(s=>({s,x:w.picks[s.id]}));
+const order={W:0,P:1,L:2}; rows.sort((a,b)=>a.x.diff-b.x.diff);
+const ww=rows.filter(r=>r.x[2]==="W").length, ll=rows.filter(r=>r.x[2]==="L").length, pp=rows.filter(r=>r.x[2]==="P").length;
+document.getElementById("wsum").innerHTML=`<span>${w.dates}</span><span>Picks: <b>${rows.length}</b></span><span>Week record: <b class="num">${ww}-${ll}${pp?"-"+pp:""}</b></span><span>All legs as one parlay: <b class="num">${amer(w.parlay)}</b> (x${w.parlay.toFixed(1)})</span><span>Diff. 1 = hardest pick</span>`;
+document.getElementById("weekTbl").innerHTML=`<thead><tr><th>Diff.</th><th>Player</th><th>Pick</th><th>Odds</th><th>Implied</th><th>Parlay share</th><th>Final / Stat</th><th>Result</th></tr></thead>
+<tbody>${rows.map(({s,x})=>`<tr><td><span class="dr ${x.diff<=3?"h":""}">${x.diff}</span></td><td>${nm(s)}</td><td>${x[0]}</td><td class="num">${fo(x[3])}${srcTag(x[4])}</td><td class="num">${(ip(x[3])*100).toFixed(1)}%</td><td class="num">${Math.round(x.share*100)}%<span class="sharebar" style="width:${Math.round(x.share*120)}px"></span></td><td class="num">${x[1]}</td><td><span class="pill ${x[2]}">${x[2]==="P"?"PUSH":x[2]==="W"?"WIN":"LOSS"}</span></td></tr>`).join("")}
+${S.filter(s=>!w.picks[s.id]).map(s=>`<tr><td></td><td>${nm(s)}</td><td class="N">No pick</td><td></td><td></td><td></td><td></td><td><span class="N">\u2014</span></td></tr>`).join("")}</tbody>`;
+document.getElementById("wnote").textContent=w.note||"";
+}
+document.getElementById("weekBtns").innerHTML=WEEKS.map((w,i)=>`<button>${w.label}</button>`).join("");
+document.querySelectorAll("#weekBtns button").forEach((b,i)=>b.onclick=()=>renderWeek(i));
+renderWeek(cur);
+// grid
+document.getElementById("gridTbl").innerHTML=`<thead><tr><th>Player</th>${WEEKS.map(w=>`<th>W${w.wk}</th>`).join("")}<th>Total</th></tr></thead>
+<tbody>${S.map(s=>`<tr><td>${nm(s)}</td>${WEEKS.map(w=>{const x=w.picks[s.id]; return x?`<td><span class="pill ${x[2]} cell" data-t="${s.name} \u00b7 ${w.label}: ${x[0]} \u2192 ${x[1]}">${x[2]}</span></td>`:`<td class="N">\u00b7</td>`}).join("")}<td class="num"><b>${rec(s)}</b></td></tr>`).join("")}</tbody>`;
+const tip=document.getElementById("tip"); let tt;
+document.querySelectorAll(".cell").forEach(c=>c.onclick=()=>{tip.textContent=c.dataset.t; tip.style.display="block"; clearTimeout(tt); tt=setTimeout(()=>tip.style.display="none",3500);});
+// cards
+document.getElementById("cards").innerHTML=S.map(s=>{
+const lastPick=[...WEEKS].reverse().find(w=>w.picks[s.id]);
+return `<div class="card"><div class="top"><div>${nm(s)}</div><span class="rank ${s.rank<=3?"r"+s.rank:""}">${s.rank}</span></div>
+<div class="rec num">${rec(s)} <span style="font-size:13px;color:var(--muted);font-weight:600">${fmtPct(s.pct)}</span></div>
+<div class="meta">Streak: ${s.streak} \u00b7 Picks made: ${s.picks}/${WEEKS.length}<br>Latest: ${lastPick?lastPick.label+" \u2014 "+lastPick.picks[s.id][0]:"\u2014"}</div>
+<div class="form">${s.seq.slice(-5).map(q=>`<span class="pill ${q.r}" title="Week ${q.wk}">${q.r}</span>`).join("")}</div></div>`;}).join("");
+// difficulty
+const D=PLAYERS.map(p=>{const a=WEEKS.filter(w=>w.picks[p.id]).map(w=>({w,x:w.picks[p.id]}));
+const n=a.length, avg=a.reduce((s,q)=>s+ip(q.x[3]),0)/n, ad=a.reduce((s,q)=>s+decO(q.x[3]),0)/n;
+const exp=a.filter(q=>q.x[2]!=="P").reduce((s,q)=>s+ip(q.x[3]),0), w=a.filter(q=>q.x[2]==="W").length;
+const hard=a.reduce((m,q)=>ip(q.x[3])<ip(m.x[3])?q:m), safe=a.reduce((m,q)=>ip(q.x[3])>ip(m.x[3])?q:m);
+const avgRank=a.reduce((s,q)=>s+q.x.diff/Object.keys(q.w.picks).length,0)/n;
+return {...p,n,avg,ad,exp,w,hard,safe,avgRank};}).sort((a,b)=>a.avg-b.avg);
+document.getElementById("diffTbl").innerHTML=`<thead><tr><th>#</th><th>Player</th><th>Avg odds</th><th>Avg implied</th><th>Avg multiplier</th><th>Hardest pick</th><th>Safest pick</th><th>Wins vs exp.</th><th>Grade</th></tr></thead>
+<tbody>${D.map((d,i)=>{const g=gradeOf(d.avg), dv=d.w-d.exp;
+return `<tr><td><span class="rank ${i<3?"r"+(i+1):""}">${i+1}</span></td><td>${nm(d)}</td><td class="num">${amer(1/d.avg)}</td><td class="num">${(d.avg*100).toFixed(1)}%</td><td class="num">x${d.ad.toFixed(2)}</td>
+<td>${d.hard.x[0]} <span class="num">(${fo(d.hard.x[3])})</span> <span class="pill ${d.hard.x[2]}">${d.hard.x[2]}</span></td>
+<td>${d.safe.x[0]} <span class="num">(${fo(d.safe.x[3])})</span> <span class="pill ${d.safe.x[2]}">${d.safe.x[2]}</span></td>
+<td class="num ${dv>=0?"pos":"neg"}">${dv>=0?"+":""}${dv.toFixed(1)}</td><td><span class="grade g${g[0]}">${g}</span></td></tr>`}).join("")}</tbody>`;
+// parlay
+const SLIP={8:{odds:1056,pay:578.25}};
+const PW=WEEKS.map(w=>{const legs=Object.entries(w.picks); const live=legs.filter(([k,x])=>x[2]!=="P");
+const dec=live.reduce((t,[k,x])=>t*decO(x[3]),1); const slip=SLIP[w.wk];
+const pay=slip?slip.pay:50*dec; const hit=live.filter(([k,x])=>x[2]==="W").length; const won=hit===live.length;
+const busters=legs.filter(([k,x])=>x[2]==="L").map(([k])=>PLAYERS.find(p=>p.id===k).name);
+return {w,n:legs.length,hit,live:live.length,odds:slip?slip.odds:Math.round((dec-1)*100),pay,won,net:won?pay-50:-50,busters,slip:!!slip};});
+let cum=0; PW.forEach(p=>{cum+=p.net;p.cum=cum;});
+const totBet=PW.length*50, totWon=PW.filter(p=>p.won).reduce((t,p)=>t+p.pay,0), net=totWon-totBet;
+const near=[...PW].sort((a,b)=>(b.hit/b.live)-(a.hit/a.live))[0];
+const bigPot=[...PW].sort((a,b)=>b.pay-a.pay)[0];
+const legsHit=PW.reduce((t,p)=>t+p.hit,0), legsTot=PW.reduce((t,p)=>t+p.live,0);
+const $=x=>"$"+Math.round(Math.abs(x)).toLocaleString();
+document.getElementById("pkpis").innerHTML=`
+<div class="kpi"><div class="k">Total bet</div><div class="v num">${$(totBet)}</div><div class="d">${PW.length} weeks \u00d7 $50</div></div>
+<div class="kpi"><div class="k">Total won</div><div class="v num">${$(totWon)}</div><div class="d">Parlay record ${PW.filter(p=>p.won).length}-${PW.filter(p=>!p.won).length}</div></div>
+<div class="kpi"><div class="k">Net</div><div class="v num ${net>=0?"pos":"neg"}">${net>=0?"+":"-"}${$(net)}</div><div class="d">${$(totBet/ (new Set(PLAYERS.map(p=>p.id))).size)} per person if split 10 ways</div></div>
+<div class="kpi"><div class="k">Closest call</div><div class="v">${near.w.label}</div><div class="d">${near.hit} of ${near.live} legs hit</div></div>
+<div class="kpi"><div class="k">Legs hit</div><div class="v num">${legsHit}/${legsTot}</div><div class="d">${Math.round(legsHit/legsTot*100)}% of all legs</div></div>
+<div class="kpi"><div class="k">Biggest ticket</div><div class="v num">${$(bigPot.pay)}</div><div class="d">${bigPot.w.label} would have paid</div></div>
+<div class="kpi"><div class="k">Left on the table</div><div class="v num">${$(PW.reduce((t,p)=>t+p.pay,0))}</div><div class="d">Total of every ticket's payout</div></div>
+<div class="kpi"><div class="k">Avg legs missed</div><div class="v num">${(PW.reduce((t,p)=>t+(p.live-p.hit),0)/PW.length).toFixed(1)}</div><div class="d">per week</div></div>`;
+document.getElementById("parlayTbl").innerHTML=`<thead><tr><th>Week</th><th>Legs</th><th>Legs Hit</th><th>Odds</th><th>Bet</th><th>Would Pay</th><th>Result</th><th>Net</th><th>Running Total</th><th>Busted By</th></tr></thead>
+<tbody>${PW.map(p=>`<tr><td><b>${p.w.label}</b></td><td class="num">${p.n}</td><td class="num">${p.hit}/${p.live}<span class="bar"><i style="width:${Math.round(p.hit/p.live*100)}%"></i></span></td>
+<td class="num">+${p.odds.toLocaleString()}${p.slip?'<span class="src slip">slip</span>':""}</td><td class="num">$50</td><td class="num">$${p.pay.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+<td><span class="pill ${p.won?"W":"L"}">${p.won?"WIN":"LOSS"}</span></td><td class="num ${p.net>=0?"pos":"neg"}">${p.net>=0?"+":"-"}$${Math.abs(p.net).toFixed(0)}</td>
+<td class="num ${p.cum>=0?"pos":"neg"}">${p.cum>=0?"+":"-"}$${Math.abs(p.cum).toFixed(0)}</td><td style="white-space:normal;min-width:180px">${p.busters.join(", ")||"\u2014"}</td></tr>`).join("")}
+<tr><td><b>Total</b></td><td class="num">${PW.reduce((t,p)=>t+p.n,0)}</td><td class="num">${legsHit}/${legsTot}</td><td></td><td class="num"><b>${$(totBet)}</b></td><td class="num">${$(PW.reduce((t,p)=>t+p.pay,0))}</td><td></td><td class="num ${net>=0?"pos":"neg"}"><b>${net>=0?"+":"-"}${$(net)}</b></td><td></td><td></td></tr></tbody>`;
+// recap
+const RECAP={
+jono:{nick:"The Lion Tamer",why:"Lions -2.5 three weeks straight, three wins",hl:"Lions -2.5 merchant \u00b7 leads the pool",p:"Rode Detroit -2.5 three straight weeks (7\u20139) and cashed all three, which is a big reason he leads at 6-2. Mostly spreads and favorites, with his only losses on the Panthers in Week 3 and the Cowboys laying -5.5 in Week 5. He's beaten the odds by more than anyone (+1.2 wins over expected)."},
+bunyard:{nick:"The Chalk Monster",why:"Lives on big favorites: Chiefs, Vikings -10, Texas Tech -465",hl:"Hot start, burned by big favorites",p:"Opened 3-0 and was the last unbeaten player. Both losses came on heavy chalk: Vikings -10 in Week 4 and Texas Tech at about -465 in Week 7. He sat out Week 5 after his Week 4 loss and loves the Chiefs (2-0 on KC)."},
+clayton:{nick:"Campus Clayton",why:"Goes to the college board, and once lost by a single yard",hl:"Mixes in college, lost one by a yard",p:"Plays a lot of college lines (Tennessee, Texas, Indiana) and is 2-0 on the Bills. His toughest beat was Derrick Henry 90+ rush yards in Week 3, when Henry finished with 89. Indiana -7 landed exactly on the number for the pool's only push."},
+sam:{nick:"The Long Shot",why:"Longest odds in the pool, plus a 0-2 to 5-3 comeback",hl:"Boldest picker \u00b7 0-2 to 5-3",p:"Started 0-2 with the Panthers and Packers, then went 5-1, including three straight wins on the Vikings, Bills and Rams. He takes the longest odds in the group (A grade); his Jonathan Taylor 2+ TDs at +250 was the biggest swing anyone has tried."},
+nix:{nick:"The 12th Man",why:"Seahawks moneyline, 8 for 8 weeks",hl:"Seahawks moneyline, every single week",p:"Has taken Seattle to win all 8 weeks, and they're 5-3 for him. It's the safest strategy in the pool (F difficulty, about 69% average hit chance), so his legs add the least to the parlay. The losses were at Washington, against San Francisco and at Chicago."},
+kollman:{nick:"The Prop Doctor",why:"Yardage props, including the biggest hit of the year (Nabers +150)",hl:"Prop player, coin-flip results",p:"Leans on player props: 2-2 on yardage lines, highlighted by Nabers 100+ at +150, the longest-odds pick anyone has hit. Missed Jadarian Price 55+ by 3 yards in Week 1. His 49ers moneylines split 1-1."},
+tito:{nick:"Touchdown Tito",why:"0-3 on moneylines, 3-0 since switching to anytime TDs",hl:"Switched to TD props and turned it around",p:"Went 0-3 on moneylines (Cowboys, Bucs, Cardinals), then switched to anytime TD props and is 3-0 since (CMC twice, Derrick Henry). He sat out Weeks 3 and 5. His recent picks are some of the safest prices in the pool."},
+tommy:{nick:"Coin Flip Tommy",why:"Alternating wins and losses all year: L-L-W-L-W-L-W",hl:"Streaky, burned by the safest pick of the year",p:"Hit Texas Tech -13.5, Bucs +2.5 and 49ers -9.5, but lost the Cowboys moneyline at -310 in Week 8, the safest price anyone has played all season. The Commanders -3.5 tie with the Giants in Week 5 also counted as a loss."},
+marcos:{nick:"The Dog Walker",why:"Keeps walking the underdogs, and they keep losing",hl:"Strong start, cold underdog run",p:"Started 2-1 with the Ravens and Jaguars, then dropped three straight, all as an underdog: Chargers +3.5, Saints +3.5 and Chargers +6. He's 0-2 backing the Chargers."},
+regs:{nick:"Bad Beat Regs",why:"Lost by 2 points, 5 yards and 3 points: the unluckiest in the pool",hl:"Unluckiest in the pool",p:"Several near misses: the Eagles won by 2 when he laid 5.5, DeVonta Smith finished 5 yards short of 80, and the Bears won by 3 when he laid 6. At 2-5 he's about 2 wins below what his odds predicted, the worst luck in the group. His two wins were the Packers and Vikings moneylines."}
+};
+document.getElementById("recaps").innerHTML=S.map(s=>{const r=RECAP[s.id]; const picks=WEEKS.filter(w=>w.picks[s.id]).map(w=>`<span class="${w.picks[s.id][2]}">W${w.wk} ${w.picks[s.id][0]}</span>`).join("");
+return `<div class="rc"><div class="hd"><span class="rank ${s.rank<=3?"r"+s.rank:""}">${s.rank}</span>${nm(s)}<span class="tag num">${rec(s)} \u00b7 ${fmtPct(s.pct)} \u00b7 streak ${s.streak}</span></div><div class="nick">\u201c${r.nick}\u201d<span>${r.why}</span></div><div class="hl">${r.hl}</div><p>${r.p}</p><div class="picks">${picks}</div></div>`;}).join("");
+// tabs
+function showTab(){let t=(location.hash||"#standings").slice(1); if(!document.querySelector(`[data-tab="${t}"]`)) t="standings";
+document.querySelectorAll("section[data-tab]").forEach(s=>s.classList.toggle("show",s.dataset.tab===t));
+document.querySelectorAll("#tabs a").forEach(a=>a.classList.toggle("on",a.dataset.t===t)); window.scrollTo(0,0);}
+window.addEventListener("hashchange",showTab); showTab();
+// themes
+function setTheme(t){document.documentElement.setAttribute("data-theme",t);
+document.querySelectorAll("#themes button").forEach(b=>b.classList.toggle("on",b.dataset.th===t));
+const m=document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute("content",{navy:"#101827",blackred:"#0a0a0a",gridiron:"#0b1a12"}[t]);
+try{localStorage.setItem("daboys-theme",t);}catch(e){}}
+document.querySelectorAll("#themes button").forEach(b=>b.onclick=()=>setTheme(b.dataset.th));
+let th0="navy"; try{th0=localStorage.getItem("daboys-theme")||"navy";}catch(e){}
+setTheme(th0);
+</script>
+</body>
+</html>
